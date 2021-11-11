@@ -51,7 +51,55 @@ async function run() {
             const user = await cursor.toArray();
             res.send(user);
         })
+        //get single order
+        // app.get('/users/:id', async (req, res) => {
+        //     const id = req.params.id;
+        //     const query = {_id: ObjectId(id) };
+        //     const order = await userCollection.findOne(query)
+        //     res.send(order);
+        // })
 
+
+
+        //update order status
+        app.put('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    orderStatus: "confirm"
+                },
+            };
+            const result = await userCollection.updateOne(filter, updateDoc, options)
+            console.log('updating user ', updateDoc);
+            res.json(result)
+        })
+
+
+
+
+
+
+        app.get('/orders', async (req, res) => {
+            const email = req.query.email;
+            console.log(email);
+            const query = { userEmail: email };
+            const cursor = userCollection.find(query)
+            const orders = await cursor.toArray();
+            res.json(orders)
+        })
+        //delete order api
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id);
+            const query = { _id: ObjectId(id) };
+            const result = await userCollection.deleteOne(query);
+            console.log('deleting user with id', result
+            );
+            res.json(result)
+        })
 
         //post user
         app.post('/users', async (req, res) => {
@@ -128,12 +176,12 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('this is car mechanic hmm kaj kore')
+    res.send('this is dream rider server ')
     console.log('this is server', port)
 })
 
 
 
 app.listen(port, () => {
-    console.log('running genius server on port ki kaj hoise mia ', port)
+    console.log('running genius server on port', port)
 })
