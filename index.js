@@ -24,6 +24,7 @@ async function run() {
         const bikeCollection = database.collection("bikeService");
         const userCollection = database.collection("users");
         const uniqueUserCollection = database.collection("uniqueUser");
+        const reviewCollection = database.collection("review");
         // const userCollection = database.collection("user");
 
 
@@ -78,28 +79,42 @@ async function run() {
 
         // make admin from user
 
-        app.put('/uniqueUser/admin',async(req,res)=>{
-            const user=req.body;
-            console.log('admin put',user);
-            const filter={email:user.email};
-            const updateDoc={$set:{role:'admin'}};
-            const result =await uniqueUserCollection.updateOne(filter,updateDoc);
+        app.put('/uniqueUser/admin', async (req, res) => {
+            const user = req.body;
+            // console.log('admin put', user);
+            const filter = { email: user.email };
+            const updateDoc = { $set: { role: 'admin' } };
+            const result = await uniqueUserCollection.updateOne(filter, updateDoc);
             res.json(result);
 
         })
 
         //get user data
-        app.get('/uniqueUser/:email',async(req,res)=>{
-            const email=req.params.email;
-            console.log(email);
-            const query={email:email};
-            const user=await uniqueUserCollection.findOne(query);
-            let isAdmin=false;
-            if(user?.role==='admin'){
-                isAdmin=true;
+        app.get('/uniqueUser/:email', async (req, res) => {
+            const email = req.params.email;
+            // console.log(email);
+            const query = { email: email };
+            const user = await uniqueUserCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
             }
-            res.json({admin:isAdmin});
+            res.json({ admin: isAdmin });
 
+        })
+
+        //review post api
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review)
+            // console.log(result);
+            res.json(result);
+        })
+        //get review api
+        app.get('/review', async (req, res) => {
+            const cursor = reviewCollection.find({});
+            const review = await cursor.toArray()
+            res.send(review);
         })
 
 
