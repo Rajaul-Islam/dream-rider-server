@@ -73,7 +73,33 @@ async function run() {
             const option = { upsert: true };
             const updateDoc = { $set: user };
             const result = await uniqueUserCollection.updateOne(filter, updateDoc, option)
-            req.json(result)
+            res.json(result)
+        })
+
+        // make admin from user
+
+        app.put('/uniqueUser/admin',async(req,res)=>{
+            const user=req.body;
+            console.log('admin put',user);
+            const filter={email:user.email};
+            const updateDoc={$set:{role:'admin'}};
+            const result =await uniqueUserCollection.updateOne(filter,updateDoc);
+            res.json(result);
+
+        })
+
+        //get user data
+        app.get('/uniqueUser/:email',async(req,res)=>{
+            const email=req.params.email;
+            console.log(email);
+            const query={email:email};
+            const user=await uniqueUserCollection.findOne(query);
+            let isAdmin=false;
+            if(user?.role==='admin'){
+                isAdmin=true;
+            }
+            res.json({admin:isAdmin});
+
         })
 
 
