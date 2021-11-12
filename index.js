@@ -37,6 +37,14 @@ async function run() {
             const bikes = await cursor.toArray();
             res.send(bikes);
         })
+
+        //post a bike service
+        app.post('/bikes',async (req,res)=>{
+            const product=req.body;
+            const result=await bikeCollection.insertOne(product);
+            res.json(result);
+        })
+
         //get bike service single api
         app.get('/bikes/:id', async (req, res) => {
             const id = req.params.id;
@@ -44,6 +52,8 @@ async function run() {
             const bike = await bikeCollection.findOne(query)
             res.send(bike);
         })
+
+
         //get users
 
         app.get('/users', async (req, res) => {
