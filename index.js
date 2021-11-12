@@ -52,7 +52,13 @@ async function run() {
             const bike = await bikeCollection.findOne(query)
             res.send(bike);
         })
-
+        // delete bike service from admin 
+        app.delete('/bikes/:id',async(req,res)=>{
+            const id = req.params.id;
+            const query={_id:ObjectId(id)};
+            const result=await bikeCollection.deleteOne(query)
+            res.json(result)
+        })
 
         //get users
 
@@ -79,7 +85,7 @@ async function run() {
             const options = { upsert: true };
             const updateDoc = {
                 $set: {
-                    orderStatus: "confirm"
+                    orderStatus: "shipped"
                 },
             };
             const result = await userCollection.updateOne(filter, updateDoc, options)
